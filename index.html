@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	  
+	  <title>Homework 8</title>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="css/bootstrap.min.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	  <script src="js/bootstrap.min.js"></script>
+	  <script src="js/moment.js"></script>
+	  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+	  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	  <script src="js/script.js"></script>
+	  <style>
+	  .table-striped tr td {
+		  text-align:left;
+	  }
+	  
+	  .buttons {
+		position: absolute;
+		right: 15px;
+		z-index:3;
+	  }
+	  
+	  .slimborder {
+		border: #E5E5E5 1px solid;
+		border-radius: 10px;
+	  }
+	  
+	  .topspace {
+		  margin-top: 10px;
+	  }
+	  
+	  .btn-default {
+		  background-color: #FAFAFA;
+	  }
+	  
+	  #starimg{
+		border: solid gray 1px;
+		border-radius: 5px;
+	  }
+	  
+	  #stockdetails {
+		  text-align: left;
+	  }
+	  
+	  #yahooapi {
+		  margin-top:45px;
+	  }
+	  </style>
+	
+	</head>
+	<body style="background:#1C5274">
+	
+		<div class="container">
+			<div class="well" style="text-align:center;background:white;margin-top:10px;">
+				
+				<h4>Stock Market Search</h4>
+				<form class="form" onsubmit="return loadJSON(0);">
+				<div class="row">
+					<div class="col-sm-3" style="text-align: left;margin-top: 10px;">
+						<label for="symbol">Enter the stock name or symbol:<span style="color:red">*</span> </label>
+					</div>
+					<div class="col-sm-6" style="text-align: left;margin-top: 10px;">
+						<input type="text" name="symbol" class="form-control input- ui-autocomplete-input ui-autocomplete-loading" id="symbol" placeholder="Apple Inc or AAPL" required>
+					</div>
+					<div class="col-sm-3" style="text-align: left;margin-top: 10px;">
+						<button type="submit" class="btn btn-primary">
+						  <span class="glyphicon glyphicon-search"></span> Get Quote
+						</button>
+						<button type="button" class="btn btn-default" onclick="clearAll();">
+						  <span class="glyphicon glyphicon-refresh"></span> Clear
+						</button>
+					</div>
+				</div>
+				</form>
+				<div class="row">
+					<div class="col-sm-3">
+					</div>
+					<div class="col-sm-6"  style="text-align: left;color:red;margin-top: 15px;" id="errormsg">
+						
+					</div>
+					<div class="col-sm-3" style="text-align: left;padding: 15px 0 5px 15px;">
+						<label>Powered By: </label><img src="images/mod-logo.png" style="width: 120px;height: 20px;"/>
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class="well" style="text-align:center;background:white;">
+				<div id="myCarousel" class="carousel slide">
+
+					<!-- Wrapper for slides -->
+					<div class="carousel-inner" role="listbox">
+					<div class="item active">
+						<div class="panel panel-default">
+							<div class="panel-heading" style="padding-bottom: 1px;">
+							  <div class="row">
+								<div class="col-sm-2" style="text-align: left;display:inline;float: left;">
+								  <label>Favorite List</label>
+								</div>
+								<div class="col-sm-6"></div>
+								<div class="col-sm-4" style="text-align: right;display:inline;float: right;">
+									<span class="hidden-xs">Automatic Refresh</span> <input id="autoupd" type="checkbox" data-toggle="toggle" title="Automatic Refresh every 5 seconds">
+									<button class="btn btn-default" onclick="updateValues();" title="Refresh"><span class="glyphicon glyphicon-refresh"></span></button>
+									<button href="#myCarousel" title="Display Stock Information" role="button" data-slide="next" class="btn btn-default" disabled id="nextButton"><span class="glyphicon glyphicon-chevron-right"></span></button>
+								</div>
+							  </div>
+							</div>
+							<div class="panel-body" style="overflow-x:auto;">
+								<table class="table table-striped">
+									<tbody id="favorites">
+										<tr>
+											<td style="font-weight: bold;">Symbol</td>
+											<td style="font-weight: bold;">Company Name</td>
+											<td style="font-weight: bold;">Stock Price</td>
+											<td style="font-weight: bold;">Change (Change Percent)</td>
+											<td style="font-weight: bold;">Market Cap</td>
+											<td style="font-weight: bold;"></td>
+										</tr>								
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="item slimborder">
+						<div class="panel panel-default">
+							<div class="panel-heading" style="padding-bottom: 1px;">
+								<div class="row">
+									<div class="col-sm-1" style="text-align: left;display:inline;float:left;">
+										<button href="#myCarousel" role="button" data-slide="prev" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></button>
+									</div>
+									<div class="col-sm-4"></div>
+									<div class="col-sm-2" style="display:inline;">
+										<label>Stock Details</label>
+									</div>
+									<div class="col-sm-5"></div>									
+								</div>
+							</div>
+							<div class="panel-body">
+								
+								<div>
+								  <!-- Nav tabs -->
+								  <ul class="nav nav-pills" role="tablist">
+									<li role="presentation" class="active"><a href="#current" aria-controls="home" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-dashboard"></span> <span class="hidden-xs">Current</span> Stock</a></li>
+									<li role="presentation"><a href="#charts" aria-controls="profile" role="tab" data-toggle="tab" onclick="loadChart();"><span class="glyphicon glyphicon-stats"></span> <span class="hidden-xs">Historical</span> Charts</a></li>
+									<li role="presentation"><a href="#news" aria-controls="messages" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-link"></span> News <span class="hidden-xs">Feeds</span></a></li>
+								  </ul>
+								  <hr>
+								  
+								  <!-- Tab panes -->
+								  <div class="tab-content">
+									
+									<div role="tabpanel" class="tab-pane active" id="current">
+										<div class="buttons">
+											<a href onclick="return postFB();"><img src="images/fb.png" /></a>
+											<a href="" onclick="return storeCurrentSymbol();"><img src="images/star.png" id="starimg"/></a>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div id="stockdetails"></div>
+											</div>
+											<div class="col-sm-6">
+												<div id="yahooapi"></div>
+											</div>
+										</div>
+									</div>
+									<div role="tabpanel" class="tab-pane" id="charts">
+										<div id="chartContainer" class="container-fluid" style="height:560px;"></div>
+									</div>
+									<div role="tabpanel" class="tab-pane" id="news" style="text-align:left;"></div>
+								  </div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				</div>
+			</div>
+		</div>
+		<script>
+			loadSymbols();
+		</script>
+		<script type="text/javascript" src="js/purl.js"></script>
+		<script type="text/javascript" src="//code.highcharts.com/stock/highstock.js"></script>
+		
+	</body>
+
+</html>
