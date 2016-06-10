@@ -1,5 +1,6 @@
 # Stock Market Search
 A Stock Viewer WebApp with the following features:
+
 1. Search stock by name or symbol
 2. Get all current details of the stock
 3. Get daily chart of the stock
