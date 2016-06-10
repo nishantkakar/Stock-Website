@@ -11,6 +11,9 @@
 	  <script src="js/script.js"></script>
 	</head>
 	<body>	
+	<!--
+Developed by Nishant Kakar
+-->	  
 		<div id="chartContainer"></div>
 		<script type="text/javascript" src="js/purl.js"></script>
 		<script type="text/javascript" src="//code.highcharts.com/stock/highstock.js"></script>

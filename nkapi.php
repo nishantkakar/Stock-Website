@@ -5,7 +5,7 @@ if($type=="news") {
 	$username = "";//Get your API key from Bing Search and enter it
 	$password = "";//as both username and password
 	$remote_url = 'https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27'.$term.'%27&$format=json';
-
+//Developed by Nishant Kakar
 	// Create a stream
 	$opts = array(
 	  'http'=>array(
